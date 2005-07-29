@@ -1,0 +1,105 @@
+#!/bin/bash
+# fix-cdrom written by Joerg Schirottke (Kano), optimized by Locsmif, 2005-01-29
+
+if [ $(id -u) != 0 ]; then
+ echo Error: You must be root to run this script!
+ exit 1
+fi
+
+CDINFO="/proc/sys/dev/cdrom/info"
+VERBOSE="-v"
+[ "$1" != "-v" ] && unset VERBOSE
+
+function mkcdvdtable () { 
+function mkarr () {
+# split left and right by colon
+IFS=":"; eval "$1=(\$2)"; unset IFS
+# make the array $1 become it's own second element which is [1] (counting from zero)
+# the second element is the right part of the colon
+eval "$1=(\${$1[1]})"
+}
+# read the cdrom information file line-by-line, and make arrays out of important lines
+while read L
+do 
+ case $L in 
+  "drive name"*) mkarr DEV "$L";;
+  *"write CD-R"*) mkarr BCD "$L";;
+  *"write DVD-R:"*) mkarr BDVD "$L";;
+  *"read DVD"*) mkarr RDVD "$L";; 
+  *);;
+ esac
+# Had to use < <(cat ... ) because unpredictable behavior occured trying to read the special file with Bash
+done < <(cat $CDINFO)
+unset IFS
+}
+
+function cdvdp {
+local I
+for ((I=0;I<${#DEV[@]};I++))
+do
+# look device name up in array 
+ [[ ${DEV[I]} = $(basename $1) ]] && break
+done
+# report back <device> <can burn cd> <can read dvd> <can burn dvd>
+echo "${DEV[I]} ${BCD[I]} ${RDVD[I]} ${BDVD[I]}"
+}
+
+function isburner () { 
+local DARR
+DARR=($(cdvdp $1))
+# array elements 1 and 3   (of 0 1 2 3)   tell us if it's a burner
+((${DARR[1]} || ${DARR[3]})) && return 0 || return 1
+}
+
+function isdvd () { 
+local DARR
+DARR=($(cdvdp $1)) 
+# return the inverse of the flag found (since in Bash, unlike boolean, exit code 0 is succesful and 1 is not)
+return $((!${DARR[2]}))
+}
+
+function isdvdburner () {
+local DARR
+DARR=($(cdvdp $1))
+# return the inverse of the flag found (since in Bash, unlike boolean, exit code 0 is succesful and 1 is not)
+return $((!${DARR[3]}))
+}
+
+function create-symlink {
+rm -f $2
+ln $VERBOSE -s $1 $2
+}
+
+function fix-ide-perm {
+chown root:disk /dev/hd*
+unset CDROM DISK FLOPPY
+for DEVICE in /proc/ide/hd?; do
+ [ $(< $DEVICE/media) == cdrom ] && CDROM="$CDROM ${DEVICE##*/}"
+ [ $(< $DEVICE/media) == disk ] && DISK="$DISK ${DEVICE##*/}"
+ [ $(< $DEVICE/media) == floppy ] && FLOPPY="$FLOPPY ${DEVICE##*/}"
+done
+for DEVICE in $DISK; do
+ chown $VERBOSE root.disk /dev/$DEVICE
+done
+for DEVICE in $FLOPPY; do
+ chown $VERBOSE root.floppy /dev/$DEVICE
+done
+for DEVICE in $CDROM; do
+ chown $VERBOSE root.cdrom /dev/$DEVICE
+done
+}
+
+fix-ide-perm
+mkcdvdtable
+#CDROM="${DEV[@]}"
+CDROM=$(awk '/name/{for (i=NF;i>=3;i--) {print $i}}' $CDINFO)
+unset COUNT BURN_COUNT DVD_COUNT DVD_BURN_COUNT
+rm -f /dev/cdrom* /dev/cdburner* /dev/dvd* /dev/cdaudio*
+for DEVICE in $CDROM; do
+ create-symlink /dev/$DEVICE /dev/cdrom$COUNT
+# ! ((COUNT)) && create-symlink /dev/cdrom /dev/cdaudio
+ ((COUNT++))
+ isburner $DEVICE && { create-symlink /dev/$DEVICE /dev/cdburner$BURN_COUNT ; ((BURN_COUNT++)) ; }
+ isdvd $DEVICE && { create-symlink /dev/$DEVICE /dev/dvd$DVD_COUNT ; ((DVD_COUNT++)) ; }
+ isdvdburner $DEVICE && { create-symlink /dev/$DEVICE /dev/dvdburner$DVD_BURN_COUNT ; ((DVD_BURN_COUNT++)) ; }
+done

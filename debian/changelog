@@ -1,0 +1,32 @@
+fix-cdrom (0.3.1) unstable; urgency=low
+
+  * optimize packaging.
+  * bump standards version.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Fri, 29 Jul 2005 21:42:35 +0200
+
+fix-cdrom (0.3) unstable; urgency=low
+
+  * remove cdaudio symlinks.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat,  2 Apr 2005 23:53:35 +0200
+
+fix-cdrom (0.2-1) unstable; urgency=low
+
+  * major upstream update.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 29 Jan 2005 15:27:55 +0100
+
+fix-cdrom (0.1-2) unstable; urgency=low
+
+  * restore file exetension for compatibility reasons. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 13 Nov 2004 20:34:09 +0100
+
+fix-cdrom (0.1-1) unstable; urgency=low
+
+  * Initial Release.
+  * enhance POSIX conformity. 
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 13 Nov 2004 03:28:09 +0100
+

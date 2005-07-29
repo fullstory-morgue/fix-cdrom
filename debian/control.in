@@ -1,0 +1,12 @@
+Source: fix-cdrom
+Section: admin
+Priority: optional
+Maintainer: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Build-Depends-Indep: @cdbs@
+Standards-Version: 3.6.2
+
+Package: fix-cdrom
+Architecture: all
+Depends: ${shlibs:Depends}, bash (>= 2.05)
+Description: fixes device links for CD-ROM drives
+ This tool rechecks the device links for CD and DVD drives.
