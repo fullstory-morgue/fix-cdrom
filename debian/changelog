@@ -1,3 +1,9 @@
+fix-cdrom (0.3.3) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 10 Oct 2005 21:15:37 +0200
+
 fix-cdrom (0.3.2) unstable; urgency=low
 
   * remove preinst.
