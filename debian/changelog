@@ -1,8 +1,9 @@
-fix-cdrom (0.3.3) UNRELEASED; urgency=low
+fix-cdrom (0.3.3) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * remove cdbs auto-update feature.
+  * bump compat level to 5.
 
- -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Mon, 10 Oct 2005 21:15:37 +0200
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 11 Mar 2006 23:18:51 +0100
 
 fix-cdrom (0.3.2) unstable; urgency=low
 
