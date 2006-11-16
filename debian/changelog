@@ -1,6 +1,7 @@
-fix-cdrom (0.3.4) UNRELEASED; urgency=low
+fix-cdrom (0.3.4) ORPHANED; urgency=low
 
   * NOT RELEASED YET
+  * ORPHANED
 
  -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Sat, 11 Mar 2006 23:20:19 +0100
 
